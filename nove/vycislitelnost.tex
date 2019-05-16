@@ -144,4 +144,39 @@ TS muze mit vice variant:
 
 Vsechny tyto varianty jsou ekvivalentni vyse definovanemu modelu v tom smyslu, ze prijmaji tu samou tridu jazyku, a vycisluji ty same funkce.
 
+\section{Vícepáskový Turingův stroj}
+
+\emph{k-páskový Turingův stroj} se od jednopáskového TS liší následujícím způsobem:
+
+\begin{itemize}
+  \item Má $k$ pásek, na každé je zvlášntí hlava.
+  \item \emph{Vstupní páska} na počátku obashuje vstupní řetězec.
+  \item \emph{Pracovní pásky} jsou určeny pro čtení í zápis.
+  \item \emph{Výstupní páska} na konci obsahuje výstupní řetězec.
+  \item Hlavý na páskách se pohybují nezávisle na sobě.
+  \item Přechodová funkce je typu $$\delta : \mathcal{Q} \times \Sigma^k \rightarrow \mathcal{Q} \times \Sigma^k \times \{ R, N, L \}^k \cup \{ \bot \}$$.
+\end{itemize}
+
+\begin{thm}
+  Ke každému $k$-páskovému TS $M$ existuje jednopáskový TS $M'$, který simuluje
+  práci $M$, příjmá stejný jazyk, a počítá stejnou funkci.
+\end{thm}
+
+\section{RAM}
+
+nezajimave (RAM je ekvivalentni TS), preskakuju :P
+
+\subsection{Převod TS $\rightarrow$ RAM}
+
+\begin{theorem}
+  Ke každému TS $M$ existuje ekvivalentní RAM $R$.
+
+  Obsah pásky je uložen ve dvou polích, $T_r$ pro pravou stranu a $T_l$ pro
+  levou stranu. Polohu hlavy si pamatujeme jako index v proměnné $h$ a stranu
+  pásky v proměnné $s$. Stav si pamatujeme v proměnné $q$ a instrukci vybíráme
+  podmíněným příkazem podle $h$, $s$ a $q$.
+\end{theorem}
+
+
+
 \end{document}
