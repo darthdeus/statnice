@@ -1,0 +1,147 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{todonotes}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amssymb}
+
+\newcommand{\inlinecode}{\texttt}
+
+\title{Státnice - Vyčíslitelnost}
+\author{Jakub Arnold}
+\date{May 2019}
+
+\theoremstyle{plain}
+\newtheorem{thm}{Theorem}
+\newtheorem{lemma}[thm]{Lemma}
+\newtheorem{claim}[thm]{Claim}
+
+\theoremstyle{plain}
+\newtheorem{defn}{Definition}
+
+\theoremstyle{remark}
+\newtheorem*{cor}{Corollary}
+\newtheorem*{rem}{Remark}
+\newtheorem*{example}{Example}
+
+
+\begin{document}
+
+\maketitle
+
+Problém \inlinecode{Helloworld}:
+Instance: Kód programu $P$ a vstup $I$
+Otazka: Je pravda, ze prvnich 12 znaku, ktere $P$ vypise, je "Hello, world"?
+
+\section{Nerozhodnutelnost \inlinecode{Helloworld}}
+
+Uvazme program $H$, ktery odpovida \emph{ano/ne} podle toho, jestli $P$ vypise \emph{Hello, world}. Predpokladame, ze vstup pro $P$ i $H$ je predavan na stdin, a vystup na stdout.
+
+Upravime program $H$ na $H_1$ tak, ze misto \emph{ne} odpovida \emph{Hello, world}. Navic upravime $H_1$ na $H_2$ tak, aby prijmal na vstupu dohromady $P$ i $I$ jako jednu vec.
+
+Potom se ptam na $H_2(H_2)$. Pokud $H_2$ vraci \emph{ano}, vypise \emph{Hello, world}, a pokud vraci \emph{Hello, world}, tak vraci \emph{ano} $\rightarrow$ spor. Z toho vyplyva, ze program $H_2$, $H_1$ a tedy ani $H$ nemuze existovat.
+
+\todo{tady se vyuzije veta o rekurzi abysme mohli spojit vstupy}
+
+\begin{defn}
+    Jsme-li pomoci problemu $B$ schopni vyresit problem $A$, rikame, ze $A$ je \emph{prevoditelny} na $B$.
+\end{defn}
+
+
+% magic(x):
+% 	return true pokud se x(x) zastavi, jinak false
+
+% broken(x):
+% 	if magic(x):
+% 		cyklim se do nekonecna
+% 	else:
+% 		zastavim se
+
+
+% broken(broken)
+
+% - pokud se broken zastavi, tak se to cykli -> spor
+% - pokd se broken cykli, tak se zastavi -> spor
+
+\section{Turingovy stroje}
+
+\begin{defn}
+    \emph{Jednopaskovy deterministicky Turuinguv stroj} $M$ je petice
+    $$M = (\mathcal{Q}, \Sigma, \delta, q_0, F),$$
+    kde
+    \begin{itemize}
+        \item $\mathcal{Q}$ je konecna mnozina stavu
+        \item $\Sigma$ je konecna paskova abeceda, ktera obsahuje znak $\lambda$ pro prazdne policko (casto budeme rozlisovat paskovou (vnitrni) a vstupni (vnejsi) abecedu)
+        \item $\delta : \mathcal{Q} \times \Sigma \rightarrow \mathcal{Q} \times \Sigma \times \{ R, N, L \} \cup \{ \bot \}$ je \emph{prechodova funkce}, kde $\bot$ oznacuje nedefinovany prechod.
+        \item $q_0 \in Q$ je \emph{pocatecni stav}.
+        \item $F \subseteq Q$ je \emph{mnozina prijmacich stavu}.
+    \end{itemize}
+\end{defn}
+
+\subsection{Konfigurace a displej turingova stroje}
+
+Turinguv storoj sestava z \emph{ridici jednotky}, \emph{pasky} (potencialne nekonecne v obou smerech), a \emph{hlavy} pro cteni a zapis, ktera se pohybuje obema smery.
+
+\emph{Displej} je dovjice $(q, a)$, kde $q \in \mathcal{Q}$ je aktualni stav a $a \in \Sigma$ je symbol pod hlavou. Na zaklade displeje TS rozhoduje, jaky dalsi krok ma vykonat.
+
+\emph{Konfigurace} zachycuje stav vypoctu TS a sklada se ze ridici jednotky, slova na pasce a pozice hlavy na pasce.
+
+\subsection{Vypocet Turingova stroje}
+
+\emph{Vypocet} zahajuje TS $M$ v \emph{pocatecni konfiguraci}, tedy v pocatecnim stavu $q_0$ se vstupnim slovem zapsanym na pasce (nesmi obsahovat prazdne policko) a hlavou nad nejlevejsim symbolem vstupniho slova.
+
+Pokud se $M$ nachazi ve stavu $q \in \mathcal{Q}$ a pod hlavou je symbol $a \in \Sigma$, pak:
+
+\begin{itemize}
+    \item Je-li $\delta(q, a) = \bot$, pak vypocet $M$ konci.
+    \item Je-li $\delta(q, a) = (q', a', Z)$ kde $q' \in \mathcal{Q}, a' \in \Sigma$ a $Z \in \{ L, N, R\}$, pak $M$ prejde do stavu $q'$, zapise na pozici hlavy symbol $a'$, a posune hlavou dle $Z$ (doleva, zustane, doprava).
+\end{itemize}
+
+\subsection{Definice}
+
+\begin{itemize}
+    \item \emph{Slovo} nad abecedou $\Sigma$ je posloupnost znaku.
+    \item \emph{Delku retezce} $w$ oznacujeme $|w| = k$ kde $k \in \mathbb{N}$.
+    \item \emph{Prazdne slovo} oznacujeme pomoci $\epsilon$.
+    \item \emph{Konkatenaci slov} $w_1, w_2$ piseme jako $w_1 w_2$.
+    \item \emph{Jazyk} je mnozina slov nad abecedou $\Sigma$.
+    \item \emph{Doplnek jazyka} $L$ oznacime pomoci $\bar{L} = \Sigma* \\ L$.
+    \item \emph{Konkatenace dvou jazyku} je jazyk obsahujici konkatenace vsech jejich slov.
+    \item \emph{Kleeneho uzaverem} jazyka $L$ je jazyk $L* = \{ w | (\exists k \in \mathbb{N}) (\exists w_1, \ldots, w_k \in L) w = w_1 w_1 \ldots w_k \}$.
+    \item Rozhodovaci problem formalizujeme jako otazku, zda dana instance patri do jazyka kladnych instanci.
+\end{itemize}
+
+\subsection{Turingovsky rozhodnutelne jazyky}
+
+\begin{itemize}
+    \item TS $M$ \emph{prijma slovo} $w$, pokud vypocet $M$ nad vstupem $w$ skonci v prijmacim stavu.
+    \item TS $M$ \emph{odmita slovo} $w$, pokud vypocet $M$ nad vstupem $w$ skonci ve stavu, ktery neni prijmaci.
+    \item \emph{Jazyk slov prijmanych} TS $M$ znacime $L(M)$.
+    \item Pokud TS $M$ nad vstupem $w$ konci, znacime $M(w)\downarrow$ (vypocet \emph{konverguje}).
+    \item Pokud TS $M$ nad vstupen $w$ nekonci, znacime $M(w)\uparrow$ (vypocet \emph{diverguje}).
+    \item Rekneme, ze jazyk $L$ je \emph{castecne rozhodnutelny} (tez \emph{rekurzivne spocetny}), pokud exsituje TS $M$, pro ktery $L = L(M)$. (tzn existuje TS, ktery jej prijma).
+    \item Rekneme, ze jazyk $L$ je \emph{rozhodnutelny} (tez \emph{rekurzivni}), pokud existuje TS $M$, ktery se vzdy zastavi, a $L = L(M)$.
+\end{itemize}
+
+\subsection{Turingovsky vycislitelne funkce}
+
+\begin{itemize}
+    \item Turinguv stroj $M$ s paskovou abecedou $\Sigma$ pocita nejakou castecnou funkci $f_M : \Sigma* \rightarrow \Sigma*$.
+    \item Pokud $M(w)\downarrow$ pro vstup $w \in \Sigma*$, je hodnota funkce $f_M(w)$ definovana, coz oznacime pomoci $f_M(w)\downarrow$, a jeji hodnota je slovo zapsane na vstupni pasce $M$ po ukonceni vypoctu nad $w$.
+    \item Pokud $M(w)\uparrow$, pak je hondnota $f_M(w)$ nedefinovana, coz oznacime pomoci $f_M(w)\uparrow$.
+    \item Funkce $f$ je \emph{turingovsky vycislitelna}, pokud existuje Turinguv stroj $M$, ktery ji pocita (kazda takova fce ma nekonecne mnoho TS, ktere ji pocitaji).
+\end{itemize}
+
+TS muze mit vice variant:
+
+\begin{itemize}
+    \item TS s jednosmerne nekonecnou paskou.
+    \item TS s vice paskami (vstupni/vystupni/pracovni).
+    \item TS s vice hlavami na paskach.
+    \item TS s pouze binarni abecedou.
+    \item Nedeterministicke TS.
+\end{itemize}
+
+Vsechny tyto varianty jsou ekvivalentni vyse definovanemu modelu v tom smyslu, ze prijmaji tu samou tridu jazyku, a vycisluji ty same funkce.
+
+\end{document}
